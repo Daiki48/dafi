@@ -1,14 +1,12 @@
 [package]
-name = "dafi"
-version = "0.1.0"
 authors = ["Daiki Nakashima <daiki48.engineer@gmail.com>"]
 description = "tui file manager"
-license = "MIT"
 edition = "2021"
+license = "MIT"
+name = "dafi"
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-crossterm = "0.25.0"
-dirs = "4.0.0"
-tui = "0.19.0"
+termion = "*"
