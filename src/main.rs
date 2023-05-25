@@ -1,43 +1,23 @@
-use crossterm::{
-    event::{
-        DisableMouseCapture,
-        EnableMouseCapture,
-    },
-    execute,
-    terminal::{
-        disable_raw_mode,
-        enable_raw_mode,
-    },
-};
+use std::io::{stdin, stdout, Write};
+use termion::event::Key;
+use termion::input::TermRead;
+use termion::raw::IntoRawMode;
 
-use std::{
-    error::Error,
-    io
-};
+fn main() {
+    let stdin = stdin();
+    let mut stdout = stdout().into_raw_mode().unwrap();
 
-use crate::ui::widget_ui;
+    write!(stdout, "{}", termion::clear::All).unwrap();
 
-mod ui;
-
-use tui::{
-    backend::CrosstermBackend,
-    Terminal,
-};
-
-
-fn main() -> Result<(), Box<dyn Error>> {
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnableMouseCapture)?;
-
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    terminal.draw(widget_ui::ui)?;
-
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), DisableMouseCapture)?;
-    terminal.show_cursor()?;
-    Ok(())
+    for key in stdin.keys() {
+        write!(stdout, "{}", termion::cursor::Goto(1, 1)).unwrap();
+        match key.unwrap() {
+            Key::Char('q') => break,
+            Key::Char(c) => writeln!(stdout, "You pressed: {}", c).unwrap(),
+            Key::Alt(c) => writeln!(stdout, "You pressed: Alt-{}", c).unwrap(),
+            Key::Ctrl(c) => writeln!(stdout, "You pressed: Ctrl-{}", c).unwrap(),
+            _ => {}
+        }
+        stdout.flush().unwrap();
+    }
 }
-
